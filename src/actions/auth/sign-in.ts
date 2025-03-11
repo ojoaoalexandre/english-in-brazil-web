@@ -14,10 +14,6 @@ export async function signIn() {
 
   const data = await response.json()
 
-  console.log({
-    data
-  })
-
   if(!response.ok) {
     throw new Error(data.error.message)
   }

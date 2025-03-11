@@ -3,7 +3,7 @@
 import { FetcherAdapter } from "@/infra/adapter/fetcher"
 import { env } from "@/lib/env"
 import { getSession } from "@/lib/session"
-import { Live } from "@/types/LiveSchema"
+import { Live } from "@/types/live-schema"
 
 export async function fetchLives() {
   const http = new FetcherAdapter()
