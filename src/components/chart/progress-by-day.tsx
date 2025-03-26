@@ -5,7 +5,6 @@ import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -27,11 +26,10 @@ export function ProgressByDay({ data }: { data: { to_char: string; pontos: numbe
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Meu Progresso</CardTitle>
-        <CardDescription>Esse é o seu histórico de treinamento das últimas 2 semanas</CardDescription>
+        <CardTitle></CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="max-w-xl mx-auto">
+        <ChartContainer config={chartConfig} className="max-w-xl">
           <LineChart
             accessibilityLayer
             data={data}

@@ -53,11 +53,6 @@ export const ExerciseGapRelation = ({
         const incorrectResponses: string[] = [];
         const correctResponses: string[] = [];
 
-        console.log({
-          data,
-          words
-        })
-
         Object.keys(data).forEach((option) => {
           const [question] = Object.values(words) as WordOptions[][];
           const [filter] = question.filter((response) => response.id == option);
@@ -116,7 +111,7 @@ export const ExerciseGapRelation = ({
                                 <div className="flex gap-4 items-center">
                                 <select
                                     disabled={exerciseCompleted}
-                                    className={`border p-2 rounded-md ${form.formState.errors[option.id] ? "border-red-500" : "border-gray-300"}`}
+                                    className={`border p-2 rounded-md ${form.formState.errors[option.id] ? "border-theme-red" : "border-gray-300"}`}
                                     {...form.register(`${option.id}`, { required: "Campo obrigatório" })}
                                 >
                                     <option value="">...</option>

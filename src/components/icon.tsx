@@ -36,4 +36,35 @@ const MicrophoneIcon = ({ size = 30, color = "#ffffff" }) => (
   </svg>
 );
 
-export { PlayIcon, PauseIcon, TranslateIcon, MicrophoneIcon }
+const Auth = () => (
+  <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-8 w-8 text-theme-blue-dark absolute top-1/2 left-2 transform -translate-y-1/2"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+        clipRule="evenodd"
+      />
+    </svg>
+)
+
+
+const AuthPassword = () => (
+  <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-8 w-8 text-theme-blue-dark absolute top-1/2 left-2 transform -translate-y-1/2"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+        clipRule="evenodd"
+      />
+    </svg>
+)
+
+export { PlayIcon, PauseIcon, TranslateIcon, MicrophoneIcon, Auth, AuthPassword }

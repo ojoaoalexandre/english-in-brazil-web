@@ -1,22 +1,11 @@
 'use client'
 
-import { hasLogin } from "@/actions/auth/has-login"
-import { signIn } from "@/actions/auth/sign-in"
-import { Button } from "@/components/ui/button"
+import { FormLogin } from "@/components/form/form-login"
 
 export default function Page() {
-  const handleSignIn = async () => {
-    await signIn()
-  }
-
-  const handleHasLogin = async () => {
-    await hasLogin()
-  }
-
   return (
-    <div>
-      <Button onClick={() => handleSignIn()}>Login</Button>
-      <Button onClick={() => handleHasLogin()}>Has Login</Button>
-    </div>
+    <main className="flex justify-center items-center min-h-screen bg-login bg-white">
+      <FormLogin />
+    </main>
   )
 }

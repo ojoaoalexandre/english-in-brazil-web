@@ -1,6 +1,6 @@
 import { fetchLessons } from "@/actions/fetch-lessons"
 import { getMe } from "@/actions/get-me"
-import { getLastLive } from "@/actions/lives/get-last-live"
+import { getLastLive } from "@/actions/get-last-live"
 import { Aside } from "@/components/aside"
 import Breadcrump from "@/components/breadcrump"
 import { SectionChapters } from "@/components/section-chapters"

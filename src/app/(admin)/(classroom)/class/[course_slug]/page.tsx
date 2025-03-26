@@ -1,6 +1,6 @@
 import { fetchChapters } from "@/actions/fetch-chapters"
 import { getMe } from "@/actions/get-me"
-import { getLastLive } from "@/actions/lives/get-last-live"
+import { getLastLive } from "@/actions/get-last-live"
 import { Aside } from "@/components/aside"
 import Breadcrump from "@/components/breadcrump"
 import { ProgressCircle } from "@/components/progress-circle"
@@ -21,26 +21,26 @@ export default async function Page({
       <div className="p-4 xl:p-8 grow">
         <Breadcrump path={[{ title: 'Módulos', url: `/class/${slug}` }]} />
 
-        {me?.data?.last_lesson_by_course?.filter(lesson => lesson.curso_slug === slug).map(lesson => (
-        <section className="py-8" key={lesson.curso_slug}>
-          <header className="pb-4 px-4">
-            <h3 className="text-xl font-semibold">Continue a aula</h3>
-            <p>Não perca o foco, continue de onde parou!</p>
-          </header>
-            <div className="flex justify-between items-center bg-background rounded-md p-8 w-full">
-              <div>
-                <h3 className="text-lg font-semibold">{lesson.curso_nome}</h3>
-                <p>{lesson.aula_titulo}</p>
+        {me?.data?.last_lesson_by_course?.filter(lesson => lesson.curso_slug === slug).map(lesson => lesson.aula_slug ? (
+          <section className="py-8" key={lesson.curso_slug}>
+            <header className="pb-4 px-4">
+              <h3 className="text-xl font-semibold">Continue a aula</h3>
+              <p>Não perca o foco, continue de onde parou!</p>
+            </header>
+              <div className="flex justify-between items-center bg-background rounded-md p-8 w-full">
+                <div>
+                  <h3 className="text-lg font-semibold">{lesson.curso_nome}</h3>
+                  <p>{lesson.aula_titulo}</p>
+                </div>
+                <Link href={`/class/${lesson.curso_slug}/${lesson.modulo_slug}/${lesson.aula_slug}/${lesson.componente}/${lesson.componente_id}`}
+                  className="flex gap-2 bg-backgroundSecondary px-4 font-semibold py-2 rounded-md"
+                >
+                  <span>Continuar Aula</span>
+                  <ChevronRight size={24} />
+                </Link>
               </div>
-              <Link href={`/class/${lesson.curso_slug}/${lesson.modulo_slug}/${lesson.aula_slug}/${lesson.componente}/${lesson.componente_id}`}
-                className="flex gap-2 bg-backgroundSecondary px-4 font-semibold py-2 rounded-md"
-              >
-                <span>Continuar Aula</span>
-                <ChevronRight size={24} />
-              </Link>
-            </div>
-        </section>
-        ))}
+          </section>
+        ): null)}
 
         {chapters?.data && chapters?.data.length > 0 ? (
         <section className="py-4">

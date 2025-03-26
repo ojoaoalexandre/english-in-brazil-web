@@ -40,8 +40,8 @@ export const ButtonInfobox = ({ task, path, currentTask }: { task: { group: stri
         <div className="flex flex-col gap-2">
           {task.items.map(taskBox => (
             <Link href={`${path}/${taskBox.__component}/${taskBox.id}`} key={`${taskBox.id}-task`}
-              className={`flex items-center gap-2 px-4 py-2 bg-backgroundSecondary rounded-md ${ currentTask === `${taskBox.__component}/${taskBox.id}` ? 'bg-theme-blue-dark dark:bg-gray-700' : '' }`}>
-              <Check className={`w-4 h-4 ${taskBox.atividadeConcluida ? 'opacity-100': 'opacity-0'}`} />
+              className={`flex items-center gap-2 px-4 py-2 bg-backgroundSecondary rounded-md ${ currentTask === `${taskBox.__component}/${taskBox.id}` ? 'bg-theme-red-500' : '' }`}>
+              <Check className={`w-5 h-5 text-theme-green-500 ${taskBox.atividadeConcluida ? 'opacity-100': 'opacity-0'}`} />
               <span>{taskBox.titulo}</span>
             </Link>
           ))}

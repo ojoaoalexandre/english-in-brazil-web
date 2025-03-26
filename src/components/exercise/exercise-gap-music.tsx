@@ -22,18 +22,18 @@ export const ExerciseGapMusic = ({
 
   const [exerciseCompleted, setExerciseCompleted] = useState(allActivitiesCompletedStatus);
   const [words, setWords] = useState({});
-  const [errors, setErrors] = useState([]);
-  const [allWords, setAllWords] = useState({});
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
+  const [allWords, setAllWords] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     setExerciseCompleted(allActivitiesCompletedStatus);
 
     GrupoPergunta.forEach((question) => {
-      const options = question.opcoes.reduce((acc, option) => {
+      const options = question.opcoes.reduce((acc: Record<string, string[]>, option) => {
         const responses = option.frase.match(/\[\(([^()]*)\)\]/g)?.map((word) =>
           word.toLowerCase().replace("[(", "").replace(")]", "").split("|")
         ) || [];
-        responses.forEach((response, position) => {
+        responses.forEach((response, position: number) => {
           acc[`${option.id}${position}`] = response;
         });
         return acc;
@@ -44,21 +44,21 @@ export const ExerciseGapMusic = ({
       if (question.apresentarOpcoes) {
         setAllWords((prev) => ({
           ...prev,
-          [question.id]: shuffle(Object.values(options).flat())
+          [question.id]: shuffle(Object.values(options).flat() as string[])
         }));
       }
     });
   }, [allActivitiesCompletedStatus, GrupoPergunta]);
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: { [s: string]: unknown; } | ArrayLike<unknown>) => {
     try {
-      const incorrectResponses = [];
+      const incorrectResponses: string[] = [];
       const correctResponses = [];
-      setErrors(null);
+      setErrors({});
 
       if (Object.values(data).includes("")) {
         Object.keys(data).forEach((field) => {
-          if (data[field] === "") {
+          if ((data as Record<string, unknown>)[field] === "") {
             setErrors((prev) => ({ ...prev, [field]: null }));
           }
         });
@@ -67,18 +67,22 @@ export const ExerciseGapMusic = ({
       }
 
       Object.keys(data).forEach((option) => {
-        const [question] = Object.values(words);
-        const formatter = data[option].toLowerCase().trim().replace(/\s{2,}/g, " ");
-        const hasApostrophe = /['"´]/g.test(formatter) ? formatter.replace(/['"´]/g, "'") : null;
+        const [question] = Object.values(words) as Record<string, string[]>[];
+        const formatter = (data as Record<string, unknown>)[option]?.toString().toLowerCase().trim().replace(/\s{2,}/g, " ");
+        const hasApostrophe = /['"´]/g.test(formatter || "") ? (formatter || "").replace(/['"´]/g, "'") : null;
         let isCorrect = false;
 
-        if (question[option]?.some((word) => /^\*/.test(word))) {
-          isCorrect = /^\*/.test(data[option].toLowerCase());
+        if ((question as Record<string, string[]>)[option]?.some((word: string) => /^\*/.test(word))) {
+          isCorrect = /^\*/.test((data as Record<string, string>)[option].toLowerCase());
         } else {
-          isCorrect = hasApostrophe ? question[option]?.includes(hasApostrophe) : question[option]?.includes(formatter);
+          isCorrect = hasApostrophe ? question[option]?.includes(hasApostrophe ?? "") : question[option]?.includes(formatter ?? "");
         }
 
-        isCorrect ? correctResponses.push(option) : incorrectResponses.push(option);
+        if (isCorrect) {
+          correctResponses.push(option);
+        } else {
+          incorrectResponses.push(option);
+        }
       });
 
       if (incorrectResponses.length > 0) {
@@ -126,7 +130,7 @@ export const ExerciseGapMusic = ({
               <div className="my-5 justify-center flex">
                 <Image
                   className="object-cover max-w-2xl xs:max-w-full"
-                  src={`https://cadastro.englishinbrazil.com.br${question.media?.url}`}
+                  src={`https://cadastro.englishinbrazil.com.br${question.media?.url || ""}`}
                   alt="Image"
                 />
               </div>

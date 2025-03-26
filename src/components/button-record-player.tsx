@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 "use client";
 
 import { useState } from "react";
@@ -6,13 +7,22 @@ import { MicrophoneIcon, PauseIcon } from "./icon";
 
 const recorder = new MicRecorder({ bitRate: 128 });
 
-export const ButtonRecordPlayer = ({ id, position, tracks, getTracks, fileName }) => {
+interface ButtonRecordPlayerProps {
+  id: string;
+  position: number;
+  tracks: unknown
+  getTracks: (tracks: Record<number, unknown>) => void;
+  fileName: string;
+}
+
+export const ButtonRecordPlayer = ({ id, position, getTracks, fileName }: ButtonRecordPlayerProps) => {
   const [isRecording, setIsRecording] = useState(false);
 
   const startRecording = async () => {
     try {
       await recorder.start();
       setIsRecording(true);
+
       getTracks({
         [position]: {
           id,
@@ -48,7 +58,7 @@ export const ButtonRecordPlayer = ({ id, position, tracks, getTracks, fileName }
     }
   };
 
-  const handleRecord = (event) => {
+  const handleRecord = (event: { preventDefault: () => void; }) => {
     event.preventDefault();
     isRecording ? stopRecording() : startRecording();
   };

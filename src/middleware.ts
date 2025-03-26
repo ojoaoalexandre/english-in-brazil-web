@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { env } from './lib/env'
 
-const protectedRoutes = ['/admin']
+const protectedRoutes = ['/']
 const publicRoutes = ['/login', '/reset-password']
 
 export default async function middleware(req: NextRequest) {
@@ -15,6 +15,10 @@ export default async function middleware(req: NextRequest) {
 
   if (isProtectedRoute && !cookie) {
     return NextResponse.redirect(new URL('/login', req.nextUrl))
+  }
+
+  if(cookie && isPublicRoute) {
+    return NextResponse.redirect(new URL('/', req.nextUrl))
   }
 
   return NextResponse.next()

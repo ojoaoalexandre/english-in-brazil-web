@@ -3,12 +3,11 @@
 
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import ReactMarkdown from 'react-markdown';
 import { getLetter } from '@/lib/utils';
 import MessageBanner from '../message-banner';
-import Markdown from 'react-markdown';
 import { ButtonPlayer } from '../button-player';
 import { GrupoPerguntaSchema } from '@/types/task-schema';
+import { Markdown } from '../markdown';
 
 export const ExerciseMultipleChoice = ({
     GrupoPergunta,
@@ -23,7 +22,7 @@ export const ExerciseMultipleChoice = ({
     updateExercisesFeedback: (correctCount: number, incorrectCount: number) => void;
     isUniqueValidation?: boolean;
 }) => {
-    const { register, formState, handleSubmit, setError, reset } = useForm();
+    const { register, formState, handleSubmit, setError, reset,  } = useForm();
     const [exerciseCompleted, setExerciseCompleted] = useState(allActivitiesCompletedStatus);
 
     useEffect(() => {
@@ -65,13 +64,13 @@ export const ExerciseMultipleChoice = ({
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
             {GrupoPergunta.map((question: GrupoPerguntaSchema, index: number) => (
-                <div key={question.id}>
+                <div key={`${question.id}-${index}`}>
                     <header>
-                        <h3 className="flex gap-2 font-medium text-lg mb-2">
+                        <h3 className="flex items-end gap-2 font-medium text-lg mb-2">
                             <span className="pt-2">{index}.</span>
                             <div>
                                 {question.pergunta?.split('\n').map((pergunta, index) => (
-                                    <Markdown key={index}>{pergunta}</Markdown>
+                                    <Markdown key={`${index}-${pergunta}`}>{pergunta}</Markdown>
                                 ))}
                             </div>
                         </h3>
@@ -89,24 +88,41 @@ export const ExerciseMultipleChoice = ({
                     )}
 
                     <div className="flex flex-col gap-2">
-                        {formState.errors[question.id]?.types?.incorrect && (
-                            <MessageBanner title="Resposta Incorreta" message={question.respostaComentada || ""} type="error" />
-                        )}
+                      {formState.errors[question.id]?.message && (
+                        <MessageBanner
+                        title=''
+                          message={`${formState.errors[question.id]?.message}`}
+                          type="error"
+                        />
+                      )}
 
-                        {exerciseCompleted || formState.errors[question.id]?.types?.correct ? (
-                            <MessageBanner title="Resposta Correta" message={question.respostaComentada || ""} type="success" />
-                        ): null}
+                      {formState.errors[question.id]?.types?.incorrect && (
+                        <MessageBanner
+                          title="Resposta Incorreta"
+                          message={question.respostaComentada || ''}
+                          type="error"
+                        />
+                      )}
+
+                      {(formState.errors[question.id]?.types?.correct ||
+                        exerciseCompleted) && (
+                        <MessageBanner
+                          title="Resposta Correta"
+                          message={question.respostaComentada || ''}
+                          type="success"
+                        />
+                      )}
 
                         {question.opcoes.map((option, position) => (
-                            <div key={option.id} className="flex items-center gap-1">
+                            <div key={`${option.id}-${position}`} className="flex items-center gap-1">
                                 <input
                                     id={option.id.toString()}
                                     type="radio"
-                                    value={option.correta.toString()}
+                                    value={'correta' in option ? option.correta?.toString(): ''}
                                     {...register(question.id.toString(), { required: "É necessário responder todas as questões", disabled: exerciseCompleted })}
-                                    className={`appearance-none w-6 h-6  rounded-full checked:bg-red-500 ${exerciseCompleted && option.correta ? "bg-red-500" : "bg-white"} border border-grey`}
+                                    className={`appearance-none w-6 h-6  rounded-full checked:bg-theme-red-500 ${exerciseCompleted && option.correta ? "bg-theme-red-500" : "bg-white"} border border-grey`}
                                 />
-                                <ReactMarkdown>{`${getLetter(position)}) ${option.opcao}`}</ReactMarkdown>
+                                <Markdown>{`${getLetter(position)}) ${'opcao' in option ? option.opcao : ''}`}</Markdown>
                             </div>
                         ))}
                     </div>

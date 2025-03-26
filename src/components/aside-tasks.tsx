@@ -59,7 +59,7 @@ export const AsideTasks = ({ me, lesson, path, currentTask }: { me: any, lesson?
             <ToggleTheme />
             <Link href="/notifications"  className="relative">
               <IoNotificationsOutline className="w-6 h-6" />
-              <span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-red-500 px-2 rounded-full text-xs">{me?.data?.notifications}</span>
+              <span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-theme-red px-2 rounded-full text-xs">{me?.data?.notifications}</span>
             </Link>
           </div>
         </div>
@@ -71,12 +71,12 @@ export const AsideTasks = ({ me, lesson, path, currentTask }: { me: any, lesson?
           </div>
 
           <div className="flex flex-col gap-2">
-            {lesson?.data.conteudo && groupInfoboxes(lesson.data.conteudo).map((task, index) => {
+            {lesson?.data.conteudo && groupInfoboxes(lesson.data.conteudo as Item[]).map((task, index) => {
               return !task.group ? (
-                <Link href={`${path}/${lesson.data.slug}/${task.__component}/${task.id}`} key={`${task?.id}-${index}`}
-                  className={`flex items-center gap-2 px-4 py-2 bg-backgroundSecondary rounded-md ${ currentTask === `${task.__component}/${task.id}` ? 'bg-theme-blue-dark dark:bg-gray-700' : '' }`}>
-                  <Check className={`w-4 h-4 ${task.atividadeConcluida ? 'opacity-100': 'opacity-0'}`} />
-                  <span className="font-semibold">{task.titulo}</span>
+                <Link href={`${path}/${lesson.data.slug}/${'__component' in task ? task.__component : ''}/${'id' in task ? task.id : ''}`} key={`${'id' in task ? task.id : index}`}
+                  className={`flex items-center gap-2 px-4 py-2 bg-backgroundSecondary rounded-md ${ 'id' in task && '__component' in task && currentTask === `${task.__component}/${task.id}` ? 'bg-theme-blue-dark dark:bg-gray-700' : '' }`}>
+                  <Check className={`w-4 h-4 ${'atividadeConcluida' in task && task.atividadeConcluida ? 'opacity-100': 'opacity-0'}`} />
+                  {'titulo' in task && <span className="font-semibold">{task.titulo}</span>}
                 </Link>
               ) : 'items' in task ? <ButtonInfobox key={index} task={task} path={`${path}/${lesson.data.slug}`} currentTask={currentTask} /> : null
             })}

@@ -2,23 +2,40 @@
 
 import { FetcherAdapter } from "@/infra/adapter/fetcher"
 import { createSession } from "@/lib/session"
+import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
-export async function signIn() {
+export async function signIn({
+  email,
+  password
+}: {
+  email: string
+  password: string
+}) {
   const http = new FetcherAdapter()
 
-  const response = await http.post('/api/auth/local', {
-    identifier: 'aluno@gmail.com',
-    password: '123456'
-  })
+  try {
+    const response = await http.post('/api/auth/local', {
+      identifier: email,
+      password
+    })
 
-  const data = await response.json()
+    const data = await response.json()
 
-  if(!response.ok) {
-    throw new Error(data.error.message)
+    if(!response.ok) {
+      throw new Error(data.error.message)
+    }
+
+    await createSession(data.user.email, data.jwt)
+  } catch (error) {
+    if(error instanceof Error) {
+      return {
+        error: error.message,
+        data: null
+      }
+    }
   }
 
-  await createSession(data.user.email, data.jwt)
-
+  revalidatePath('/')
   redirect('/')
 }

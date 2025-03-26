@@ -6,16 +6,16 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const getUrl = (slug?: string) => {
-  return slug ? `${process.env.API_URL}${slug}` : '/images/avatar.png'
+  return slug ? `${process.env.API_URL}${slug || ''}` : '/images/avatar.png'
 }
 
 export const letters = [
   "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "U", "V", "W", "X", "Y", "Z"
 ];
 
-export const imageURL = (path: string) => path ? `https://cadastro.englishinbrazil.com.br${path}` : null;
+export const imageURL = (path: string) => path ? `https://cadastro.englishinbrazil.com.br${path || ''}` : null;
 
-export const shuffle = (array: []) => {
+export const shuffle = (array: string[]) => {
   const list = [...array];
   for (let i = list.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));

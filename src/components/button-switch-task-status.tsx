@@ -23,7 +23,7 @@ export const ButtonSwitchTaskStatus = ({ course_slug, chapter_slug, lesson_slug,
         })
       }
 
-      className={`font-semibold px-4 py-2 rounded-md ${taskStatus ? 'bg-green-400 text-green-800': 'bg-backgroundSecondary'}`}>
+      className={`font-semibold px-4 py-2 rounded-md ${taskStatus ? 'bg-theme-green-500 text-theme-blue-dark': 'bg-backgroundSecondary'}`}>
       {taskStatus ? 'Aula Concluída' : 'Marcar como Concluída'}
     </button>
   )

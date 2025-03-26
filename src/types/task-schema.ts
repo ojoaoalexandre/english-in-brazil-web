@@ -1,6 +1,108 @@
 import { z } from 'zod'
 import { commentSchema } from './comment-schema';
 
+const MediaSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  alternativeText: z.string(),
+  caption: z.string(),
+  width: z.null(),
+  height: z.null(),
+  formats: z.null(),
+  hash: z.string(),
+  ext: z.string(),
+  mime: z.string(),
+  size: z.number(),
+  url: z.string(),
+  previewUrl: z.null(),
+  provider: z.string(),
+  provider_metadata: z.null(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+const OpcaoSchema = z.object({
+  id: z.number(),
+  frase: z.string(),
+  prefixo: z.null(),
+  media: MediaSchema,
+});
+
+const grupoPerguntaFonemaSchema = z.object({
+  id: z.string(),
+  pergunta: z.string(),
+  perguntaComplemento: z.string().nullable(),
+  respostaComentada: z.string(),
+  opcoes: z.array(
+    z.object({
+      id: z.number(),
+      fonema: z.string(),
+      respostas: z.string()
+    })
+  )
+})
+
+export type GrupoPerguntaFonemaSchema = z.infer<typeof grupoPerguntaFonemaSchema>
+
+/** EXERCISE PHONEME */
+const ExercicioFonemaSchema = z.object({
+  __component: z.literal("aula.exercicio-fonema"),
+  id: z.number(),
+  prefixo: z.string(),
+  GrupoPergunta: z.array(grupoPerguntaFonemaSchema),
+})
+
+const grupoPerguntaGapSchema = z.object({
+  id: z.string(),
+  pergunta: z.string(),
+  perguntaComplemento: z.string().nullable(),
+  respostaComentada: z.string(),
+  apresentarOpcoes: z.boolean(),
+  preenchimento: z.string(),
+  media: z.object({
+    ext: z.string(),
+    url: z.string()
+  }),
+  opcoes: z.array(
+    z.object({
+      id: z.number(),
+      frase: z.string()
+    })
+  )
+})
+
+export type GrupoPerguntaGapSchema = z.infer<typeof grupoPerguntaGapSchema>
+
+/** EXERCISE GAP */
+const ExercicioLacunasSchema = z.object({
+  __component: z.literal("aula.exercicio-lacunas"),
+  id: z.number(),
+  linkVideo: z.string().nullable(),
+  prefixo: z.string(),
+  sufixo: z.string().nullable(),
+  GrupoPergunta: z.array(grupoPerguntaGapSchema),
+});
+
+const audioSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  alternativeText: z.string(),
+  caption: z.string(),
+  width: z.number().nullable(),
+  height: z.number().nullable(),
+  formats: z.unknown().nullable(),
+  hash: z.string(),
+  ext: z.string(),
+  mime: z.string(),
+  size: z.number(),
+  url: z.string(),
+  previewUrl: z.string().nullable(),
+  provider: z.string(),
+  provider_metadata: z.unknown().nullable(),
+  createdAt: z.string(), // ISO date string
+  updatedAt: z.string(), // ISO date string
+});
+
 const MediaPronunciationSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -96,32 +198,6 @@ const ExercicioLacunasMusicaSchema = z.object({
   GrupoPergunta: z.array(grupoPerguntaGapMusicSchema),
 });
 
-const MediaSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  alternativeText: z.string().nullable(),
-  caption: z.string().nullable(),
-  width: z.number().nullable(),
-  height: z.number().nullable(),
-  formats: z.unknown().nullable(),
-  hash: z.string(),
-  ext: z.string(),
-  mime: z.string(),
-  size: z.number(),
-  url: z.string(),
-  previewUrl: z.string().nullable(),
-  provider: z.string(),
-  provider_metadata: z.unknown().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string()
-});
-
-const OpcaoSchema = z.object({
-  id: z.number(),
-  opcao: z.string(),
-  correta: z.boolean()
-});
-
 const grupoPerguntaSchema = z.object({
   id: z.number(),
   pergunta: z.string(),
@@ -171,7 +247,9 @@ const ContentExerciseSchema = z.array(
     ExercicioColunasSchema,
     ExercicioLacunasMusicaSchema,
     ExercicioMultiplaEscolhaSchema,
-    ExercicioSimplesSchema
+    ExercicioSimplesSchema,
+    ExercicioLacunasSchema,
+    ExercicioFonemaSchema,
   ])
 );
 
@@ -199,6 +277,32 @@ const TaskExerciseSchema = z.object({
   aula_exercicio: exerciseSchema,
   atividadeConcluida: z.boolean()
 });
+
+const conteudoItemSchema = z.object({
+  id: z.number(),
+  frasePergunta: z.string(),
+  fraseResposta: z.string(),
+  frasePerguntaPt: z.string(),
+  fraseRespostaPt: z.string(),
+  sufixo: z.string().nullable(),
+  audio: audioSchema,
+});
+
+export type GrupoPerguntaSpeakUpSchema = z.infer<typeof conteudoItemSchema>
+
+/** SPEAK UP */
+const SpeakUpSchema = z.object({
+  __component: z.literal("aula.speak-up2-0"),
+  id: z.number(),
+  pontos: z.number(),
+  titulo: z.string(),
+  prefixo: z.string(),
+  sufixo: z.string(),
+  group: z.unknown().nullable(),
+  conteudo: z.array(conteudoItemSchema),
+  atividadeConcluida: z.boolean(),
+});
+
 
 const FileSchema = z.object({
   id: z.number(),
@@ -232,26 +336,6 @@ const FileContentSchema = z.object({
   arquivo: z.array(FileSchema),
   conteudoTexto: z.string().optional(),
   atividadeConcluida: z.boolean(),
-});
-
-const audioSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  alternativeText: z.string(),
-  caption: z.string(),
-  width: z.null(),
-  height: z.null(),
-  formats: z.null(),
-  hash: z.string(),
-  ext: z.string(),
-  mime: z.string(),
-  size: z.number(),
-  url: z.string(),
-  previewUrl: z.null(),
-  provider: z.string(),
-  provider_metadata: z.null(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
 });
 
 export type AudioSchema = z.infer<typeof audioSchema>
@@ -403,6 +487,7 @@ const ContentSchema = z.array(
     VocabularySchema,
     DialogContentSchema,
     VideoContentSchema,
+    SpeakUpSchema,
   ])
 );
 

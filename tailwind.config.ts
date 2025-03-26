@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
   	extend: {
+      backgroundImage: {
+        login: "url('/bg-brand.png')"
+      },
   		colors: {
   			background: 'hsl(var(--background))',
         backgroundSecondary: 'hsl(var(--background-secondary))',
@@ -50,7 +53,26 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+        'theme-blue': {
+          light: '#D0EAEE',
+          DEFAULT: '#4B4696',
+          dark: '#2C2957'
+        },
+        'theme-red': {
+          500: '#E94653'
+        },
+        'theme-green': {
+          500: '#B1D179'
+        },
+        'theme-yellow': {
+          500: '#F1C950'
+        },
+        'theme-gray': {
+          900: '#121212',
+          800: '#1B1F24',
+          600: '#313131'
+        }
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

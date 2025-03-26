@@ -1,15 +1,13 @@
 import { getMe } from "@/actions/get-me"
-import { getLastLive } from "@/actions/lives/get-last-live"
+import { getLastLive } from "@/actions/get-last-live"
 import CardThumb from "@/components/card-thumb"
 import { ToggleTheme } from "@/components/toggle-theme"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronDown } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
-import { FaCirclePlay } from "react-icons/fa6"
-import { HiHome } from "react-icons/hi"
-import { IoChatbubbleEllipsesSharp, IoNotificationsOutline } from "react-icons/io5"
-import { TbDoorExit, TbSettings } from "react-icons/tb"
+import { IoNotificationsOutline } from "react-icons/io5"
+import { TbSettings } from "react-icons/tb"
+import { Menu } from "@/components/menu"
 
 export default async function AdminLayout({
   children
@@ -23,43 +21,8 @@ export default async function AdminLayout({
 
   return (
     <div className="flex min-h-screen">
-      <div className="flex">
-      <nav className="hidden md:flex flex-col px-2 justify-between border-r-2 border-gray-200 dark:border-gray-800 dark:bg-theme-gray-900">
-        <div className="sticky">
-        <Image src="/images/logo.webp" className="flex py-10 w-16" width={64} height={64} alt="Logo" />
-        <ul className="flex flex-col gap-3 py-4">
-          <li>
-            <Link className="flex flex-col hover:bg-theme-blue-dark dark:hover:bg-gray-700 rounded-md p-2 items-center dark:text-gray-200 text-gray-500" href="/">
-              <HiHome className="h-8 w-8" />
-              <p className="text-xs tracking-wider">Início</p>
-            </Link>
-          </li>
-          <li>
-            <Link className="flex flex-col hover:bg-theme-blue-dark dark:hover:bg-gray-700 rounded-md p-2 items-center dark:text-gray-200  bg-theme-red-500 text-white" href="/lives">
-              <FaCirclePlay className="h-8 w-8" />
-              <p className="text-xs tracking-wider">Lives</p>
-              </Link>
-          </li>
-          <li>
-            <Link className="flex flex-col hover:bg-theme-blue-dark dark:hover:bg-gray-700 rounded-md p-2 items-center dark:text-gray-200  text-gray-500" href="/space">
-              <IoChatbubbleEllipsesSharp className="h-8 w-8" />
-              <p className="text-xs tracking-wider">Space</p>
-            </Link>
-          </li>
-        </ul>
-        </div>
-        <ul className="flex flex-col sticky bottom-0 gap-3 py-4">
-          <li>
-            <button className="w-full">
-              <a className="flex flex-col hover:bg-theme-blue-dark dark:hover:bg-gray-700 rounded-md p-2 items-center dark:text-gray-200 text-gray-500">
-              <TbDoorExit className="h-8 w-8" />
-                <p className="text-xs tracking-wider">Sair</p>
-              </a>
-            </button>
-          </li>
-        </ul>
-      </nav>
-      </div>
+      <Menu />
+
       <main className="flex flex-col bg-backgroundSecondary grow">
         <div className="flex px-4 py-4 justify-between gap-2 bg-background xl:hidden mb-4">
           <div className="flex gap-2 items-center px-2 bg-backgroundSecondary w-full rounded-lg">
@@ -76,11 +39,11 @@ export default async function AdminLayout({
             <ToggleTheme />
             <Link href="/notifications" className="relative">
               <IoNotificationsOutline className="w-6 h-6" />
-              <span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-red-500 px-2 rounded-full text-xs">{me?.data?.notifications}</span>
+              <span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-theme-red px-2 rounded-full text-xs">{me?.data?.notifications}</span>
             </Link>
           </div>
         </div>
-        <div className="p-4 xl:p-8">
+        <div className="p-8">
           {children}
         </div>
       </main>
@@ -100,17 +63,18 @@ export default async function AdminLayout({
             <ToggleTheme />
             <Link href="/notifications"  className="relative">
               <IoNotificationsOutline className="w-6 h-6" />
-              <span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-red-500 px-2 rounded-full text-xs">{me?.data?.notifications}</span>
+              <span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-theme-red px-2 rounded-full text-xs">{me?.data?.notifications}</span>
             </Link>
           </div>
         </div>
 
-        {live?.data ? (
+        {live?.data.title ? (
           <section className="px-4">
             <header className="flex justify-between py-2">
               <h3 className="text-xl font-semibold">Live</h3>
               <ChevronDown className="w-6 h-6" />
             </header>
+
             <CardThumb
               title={live.data.title}
               subtitle={live.data.publishedAt}

@@ -8,6 +8,7 @@ import { ButtonPlayer } from './button-player';
 import { useFormContext } from 'react-hook-form';
 import Image from 'next/image';
 import { ReactNode } from 'react';
+import { getUrl, imageURL } from '@/lib/utils';
 
 interface MarkdownProps {
   children: React.ReactNode;
@@ -16,19 +17,25 @@ interface MarkdownProps {
   errors?: Record<string, any>;
 }
 
-export const Markdown: React.FC<MarkdownProps> = ({
+export const Markdown = ({
   children,
   optionId,
   exerciseCompleted,
   errors
-}) => {
+}: MarkdownProps) => {
   const form = useFormContext();
 
   const convertVideoLinksToIframe = (content: string) => {
-    const videoUrlRegex = /\[\{\{(.*?)\}\}\]/g;
+    const audioOrVideo = /\[\{\{(.*?)\}\}\]/g;
 
-    return content.replace(videoUrlRegex, (_, url: string) => {
-      return `<div class="flex flex-col w-full items-center justify-center py-2"><iframe width="560" height="315" src="${url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><div>`;
+    return content.replace(audioOrVideo, (_, url: string) => {
+      if (url.endsWith(".mp3")) {
+        // Se for áudio, apenas retorna o link ou você pode substituir por um <audio> tag
+        return `<audio controls class="w-full"><source src="${imageURL(url)}" type="audio/mpeg">Your browser does not support the audio element.</audio>`;
+      } else {
+        // Caso contrário, é vídeo
+        return `<div class="flex flex-col w-full items-center justify-center py-2"><iframe width="560" height="315" src="${url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+      }
     });
   };
 
@@ -62,11 +69,11 @@ export const Markdown: React.FC<MarkdownProps> = ({
         ol: ({ children }) => <ol className="pl-5">{children}</ol>,
         li: ({ children }) => <li className="list-decimal">{children}</li>,
         a: ({ children, ...props }) => (
-          <a target="_blank" className="underline text-red-500" {...props}>
+          <a target="_blank" className="underline text-theme-red-500" {...props}>
             {children}
           </a>
         ),
-        p: ({ children, ...props }) => <p {...props}>{children}</p>,
+        p: ({ children }) => <p>{children}</p>,
         h2: ({ children, ...props }) => (
           <div className="flex justify-center w-full items-center">
             <h2 className="font-semibold text-2xl" {...props}>
@@ -75,7 +82,7 @@ export const Markdown: React.FC<MarkdownProps> = ({
           </div>
         ),
         img: ({ src }) => (
-          <Image src={`https://cadastro.englishinbrazil.com.br${src}`} alt="src" />
+          <Image src={`https://cadastro.englishinbrazil.com.br${src || ''}`} width={450} height={450} alt="src" />
         ),
         table: ({ children, ...props }) => (
           <table className="table-fixed text-black w-full border-collapse my-4" {...props}>
@@ -94,22 +101,22 @@ export const Markdown: React.FC<MarkdownProps> = ({
         ),
         tr: ({ children }) => <tr className="bg-white hover:bg-gray-50">{children}</tr>,
         thead: ({ children }) => <thead className="first:w-14">{children}</thead>,
-        br: () => <div className="py-4" />,
+        br: () => <span className="py-4" />,
         gap: ({ children, value }: {
           children: string;
           value: string;
         }) => {
           return exerciseCompleted ? (
-            <span className="border rounded border-green-500 py-1 px-4 bg-green-200 text-gray-700">
+            <span key={`${value}-${Math.random() * 5}`} className="border rounded border-theme-green-500 py-1 px-4 bg-green-200 text-gray-700">
               {value}
             </span>
           ) : (
-            <div className="inline-block relative">
+            <div key={`${value}-${Math.random() * 5}`} className="inline-block relative">
               <input
                 type="text"
                 className={`${
                   errors && (errors[children] === null || errors[children] === "wrong")
-                    ? "border-red-500"
+                    ? "border-theme-red"
                     : ""
                 } text-sm w-32 appearance-none border rounded py-1 px-2 text-black bg-white focus:outline-none focus:shadow-outline`}
                 {...form.register(children)}
@@ -123,7 +130,7 @@ export const Markdown: React.FC<MarkdownProps> = ({
             </div>
           )
         },
-        border: ({ children }: { children: string }) => <div className="border-2 border-red-500 rounded-md p-4">{children}</div>,
+        border: ({ children }: { children: string }) => <div className="border-2 border-theme-red-500 rounded-md p-4">{children}</div>,
       }}
     >
       {customRender(children)}

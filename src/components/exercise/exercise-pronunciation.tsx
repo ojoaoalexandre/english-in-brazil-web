@@ -1,9 +1,13 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { Markdown } from "../markdown";
-import { GrupoPerguntaPronunciationSchema } from "@/types/task-schema";
+import { GrupoPerguntaPronunciationSchema } from '@/types/task-schema'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { ButtonRecordPlayer } from '../button-record-player'
+import { Markdown } from '../markdown'
+import MessageBanner from '../message-banner'
+import { ButtonPlayer } from '../button-player'
 
 export const ExercisePronunciation = ({
   GrupoPergunta,
@@ -14,112 +18,206 @@ export const ExercisePronunciation = ({
   allActivitiesCompletedStatus: boolean
   completed: (status: boolean) => void
 }) => {
-    const form = useForm();
-    const [exerciseCompleted, setExerciseCompleted] = useState(allActivitiesCompletedStatus);
-    const [tracks, setTracks] = useState({});
+  const { handleSubmit, formState, register, setError } = useForm()
 
-    useEffect(() => {
-        setExerciseCompleted(allActivitiesCompletedStatus);
-    }, [allActivitiesCompletedStatus]);
+  const [exerciseCompleted, setExerciseCompleted] = useState<boolean>(
+    allActivitiesCompletedStatus
+  )
 
-    const getTracks = (newTracks) => {
-        setTracks((prev) => ({ ...prev, ...newTracks }));
-    };
+  const [tracks, setTracks] = useState<Tracks>({})
 
-    const handleUpload = async (formData) => {
-        await fetch("https://cadastro.englishinbrazil.com.br/api/aluno/audioPronuncia", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${token}` },
-            body: formData
-        });
+  interface Track {
+    audioBlob: Blob;
+    fileName: string;
+    response?: string;
+  }
 
-        // toast.promise(upload, {
-        //     loading: "Salvando seus áudios...",
-        //     success: "Áudios enviados com sucesso!",
-        //     error: "Erro no envio dos áudios."
-        // });
-    };
+  interface Tracks {
+    [key: number]: Track;
+  }
 
-    const onSubmit = () => {
-        try {
-            const totalResponses = GrupoPergunta.reduce((acc, q) => acc + q.opcoes.length, 0);
-            if (Object.keys(tracks).length < totalResponses) {
-                form.setError("empty", { types: { required: "Por favor grave todos os áudios" } });
-                return;
-            }
+  const getTracks = (tracks: Tracks) => {
+    setTracks((old: Tracks) => ({
+      ...old,
+      ...tracks
+    }));
+  }
 
-            const formData = new FormData();
-            formData.append("type", "audio");
-            Object.keys(tracks).forEach((track) => {
-                formData.append("files", tracks[track].audioBlob, tracks[track]?.fileName);
-            });
+  useEffect(() => {
+    setExerciseCompleted(allActivitiesCompletedStatus)
+  }, [allActivitiesCompletedStatus])
 
-            handleUpload(formData);
-            setExerciseCompleted(true);
-            completed(true);
-        } catch (error) {
-            console.error("Erro ao processar envio:", error);
-        }
-    };
+  const handleUpload = async (formData: FormData) => {
+    const upload = fetch(
+      `${process.env.NEXT_PUBLIC_HOST_URL_DEV}/api/aluno/audioPronuncia`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      }
+    )
 
-    const handleResetExercise = () => {
-        completed(false);
-        setExerciseCompleted(false);
-    };
+    toast.promise(upload, {
+      loading: 'Estamos salvando o seus audios....',
+      success: 'Áudios Enviados com Sucesso',
+      error: 'Whoops, tivemos algum erro no envio'
+    })
+  }
 
-    return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
-            {GrupoPergunta.map((question, index) => (
-                <div key={question.id} className="pt-5 pl-2">
-                    <h3 className="font-medium text-lg mb-2">{question.pergunta}</h3>
+  const onSubmit = () => {
+    try {
+      const totalResponses = GrupoPergunta.reduce(
+        (previousSentence, currentSentence) =>
+          previousSentence + currentSentence.opcoes.length,
+        0
+      )
 
-                    {question.perguntaComplemento && <Markdown>{question.perguntaComplemento}</Markdown>}
+      if (Object.keys(tracks).length < totalResponses) {
+        setError('empty', {
+          types: {
+            required: 'Por favor grave todos os áudios'
+          }
+        })
 
-                    {form.formState.errors.empty?.types?.required && <p className="text-red-500">{form.formState.errors.empty.types.required}</p>}
+        return
+      }
 
-                    {exerciseCompleted && <p className="text-green-500">Parabéns, todos os áudios foram gravados!</p>}
+      const formData = new FormData()
+      formData.append('type', 'audio')
+      formData.append('audio-filename', 'arquivo')
 
-                    <div className="py-2">
-                        <table className="border-collapse table-auto w-full text-sm">
-                            <thead>
-                                <tr>
-                                    <th className="font-medium p-4 pt-0 pb-3 text-slate-400 text-left">Frase</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white border-t">
-                                {question.opcoes.map((sentence, position) => {
-                                    const fileName = `audio_pronuncia_${new Date()}_${sentence.id}_${position}.mp3`;
-                                    return (
-                                        <tr key={sentence.id}>
-                                            <td className="border-b border-slate-100 p-4 text-slate-500">
-                                                <Markdown>{sentence.frase}</Markdown>
-                                                {allActivitiesCompletedStatus ? (
-                                                    <audio src={`https://cadastro.englishinbrazil.com.br/uploads/audio_pronuncia/${fileName}?${Date.now()}`} controls />
-                                                ) : (
-                                                    tracks[position]?.response && <audio src={tracks[position].response} controls />
-                                                )}
-                                            </td>
-                                            {!exerciseCompleted && (
-                                                <td className="border-b border-slate-100 p-4 text-slate-500">
-                                                    <button onClick={() => getTracks({ [position]: { response: "mocked_audio_url", fileName } })}>
-                                                        Gravar
-                                                    </button>
-                                                </td>
-                                            )}
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            ))}
+      Object.keys(tracks).map(track => {
+        formData.append(
+          'files',
+          tracks[Number(track)].audioBlob,
+          tracks[Number(track)]?.fileName
+        )
+      })
 
-           <div className="flex">
-            {!exerciseCompleted && <button type="submit" className="flex font-bold shadow-md bg-background px-6 py-2 rounded-md">Validar</button>}
+      handleUpload(formData)
+      setExerciseCompleted(true)
+      completed(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-            {exerciseCompleted && !allActivitiesCompletedStatus && <button onClick={handleResetExercise} className="flex font-bold shadow-md  bg-background px-6 py-2 rounded-md">Refazer Atividade</button>}
+  const handleResetExercise = () => {
+    completed(false)
+    setExerciseCompleted(false)
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {GrupoPergunta.map((question) => {
+        return (
+          <div key={question.id} className="pt-5 pl-2">
+            <header>
+              <h3 className="font-medium text-lg mb-2">
+                {question.pergunta}
+              </h3>
+              <Markdown>{question.perguntaComplemento}</Markdown>
+            </header>
+
+            <input type="hidden" {...register(`empty`)} />
+            {formState.errors['empty']?.types?.required && (
+              <MessageBanner
+                title='Por favor grave todos os áudios'
+                message={`${formState.errors['empty']?.types?.required}`}
+                type="error"
+              />
+            )}
+
+            {exerciseCompleted && (
+              <MessageBanner
+                title="Parabéns"
+                message="Todos os áudios foram gravados!"
+                type="success"
+              />
+            )}
+
+            <div className="py-2">
+              <table className="border-collapse table-auto w-full text-sm">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th className="font-medium p-4  pt-0 pb-3 text-slate-400 text-left">
+                      Frase
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white border-t">
+                  {question.opcoes.map((sentence, position: number) => {
+                    const fileName = `audio_pronuncia_${(Math.random() * 10000)
+                      .toString()
+                      .padStart(5, '0')}_${sentence.id}_${position}.mp3`
+
+                    return (
+                      <tr key={sentence.id}>
+                        <td className="border-b w-[70px] border-slate-100 p-4  text-slate-500">
+                          {sentence.media?.url ? (
+                            <ButtonPlayer path={sentence.media?.url} />
+                          ) : (
+                            <span>-</span>
+                          )}
+                        </td>
+                        <td className="border-b border-slate-100 p-4  text-slate-500">
+                          <Markdown>{sentence.frase}</Markdown>
+
+                          {allActivitiesCompletedStatus && (
+                            <audio
+                              src={`${
+                                process.env.NEXT_PUBLIC_HOST_URL_DEV
+                              }/uploads/audio_pronuncia/${fileName}?${new Date().getTime()}`}
+                              controls
+                            />
+                          )}
+
+                          {!allActivitiesCompletedStatus &&
+                            tracks[position]?.response && (
+                              <audio src={tracks[position].response} controls />
+                            )}
+                        </td>
+                        <td className="border-b w-[70px] border-slate-100 p-4  text-slate-500">
+                          {!exerciseCompleted && (
+                            <ButtonRecordPlayer
+                              id={sentence.id.toString()}
+                              position={position}
+                              tracks={tracks}
+                              fileName={fileName}
+                              getTracks={getTracks}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
-        </form>
-    );
+          </div>
+        )
+      })}
+
+      {!exerciseCompleted && (
+        <button
+          type="submit"
+          className="flex font-bold shadow-md bg-white text-theme-blue-2 px-6 py-2 rounded-md"
+        >
+          Validar
+        </button>
+      )}
+
+      {exerciseCompleted && !allActivitiesCompletedStatus && (
+        <button
+          onClick={handleResetExercise}
+          className="flex font-bold shadow-md bg-white text-theme-blue-2 px-6 py-2 rounded-md"
+        >
+          Refazer Atividade
+        </button>
+      )}
+    </form>
+  )
 }

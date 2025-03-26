@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '*.englishinbrazil.com.br',
       },
+      {
+        protocol: 'https',
+        hostname: 'cadastro.englishinbrazil.com.brundefined',
+      },
     ],
   },
 };

@@ -55,5 +55,5 @@ export async function createSession(email: string, token: string) {
 
 export async function deleteSession() {
   const cookieStore = await cookies()
-  cookieStore.delete('session')
+  cookieStore.delete(env.COOKIE_JWT)
 }

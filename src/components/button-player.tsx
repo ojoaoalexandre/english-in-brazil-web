@@ -19,10 +19,10 @@ export const ButtonPlayer = ({ path }: { path: string }) => {
   return (
     <div className="flex items-center">
       <div
-        className="p-2 rounded-full cursor-pointer bg-red-500 m-2"
+        className="p-2 rounded-full cursor-pointer bg-theme-red-500 m-2"
         onClick={handlePlayPause}
       >
-        {isPlaying ? <PauseIcon className="w-4 h-4" /> : <PlayIcon className="w-4 h-4" />}
+        {isPlaying ? <PauseIcon className="w-5 h-5 text-white" /> : <PlayIcon className="w-5 h-5 text-white" />}
       </div>
     </div>
   )

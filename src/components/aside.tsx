@@ -25,17 +25,18 @@ export const Aside = ({ me, live }: { me: any, live?: any }) => {
             <ToggleTheme />
             <Link href="/notifications"  className="relative">
               <IoNotificationsOutline className="w-6 h-6" />
-              <span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-red-500 px-2 rounded-full text-xs">{me?.data?.notifications}</span>
+              <span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-theme-red px-2 rounded-full text-xs">{me?.data?.notifications}</span>
             </Link>
           </div>
         </div>
 
-        {live?.data ? (
+        {live?.data.title ? (
           <section className="px-4">
             <header className="flex justify-between py-2">
               <h3 className="text-xl font-semibold">Live</h3>
               <ChevronDown className="w-6 h-6" />
             </header>
+
             <CardThumb
               title={live.data.title}
               subtitle={live.data.publishedAt ?? ''}

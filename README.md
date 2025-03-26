@@ -5,8 +5,9 @@
 - [x] Módulos
 - [x] Aulas
 - [x] Atividades
-- [ ] Login
-- [ ] Logout
+- [ ] Sign In
+- [ ] Sign Up
+- [x] Sign Out
 - [ ] Reset Password
 
 ## Atividades

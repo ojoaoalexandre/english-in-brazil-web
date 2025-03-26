@@ -15,11 +15,11 @@ export default async function Page() {
       <Breadcrump path={[]} />
 
       <section className="py-4">
-        <header className="pb-4">
-          <h3 className="text-2xl font-semibold">Outros Cursos</h3>
+        <header className="pb-4 px-2">
+          <h3 className="text-xl font-semibold">Outros Cursos</h3>
           <p>Acesse o seu curso aqui e conheça os outros cursos</p>
         </header>
-        <div className={`grid grid-cols-6 gap-2`}>
+        <div className={`grid grid-cols-5 gap-2`}>
           {courses?.data?.map(course => {
             return (
               <Link key={course.id} href={course.enabled ? `/class/${course.slug}` : `${course.landingPage}`}>
@@ -46,28 +46,32 @@ export default async function Page() {
         </div>
       </section>
 
-      <section className="py-4">
-        <header className="pb-4">
-          <h3 className="text-2xl font-semibold">Continue a aula</h3>
-          <p>Não perca o foco, continue de onde parou!</p>
-        </header>
-        {me?.data?.last_lesson ? (
-          <div className="flex justify-between items-center bg-background rounded-md px-4 py-8 w-full">
-            <div>
-              <h3 className="text-lg font-semibold">{me.data.last_lesson.course_name}</h3>
-              <p>{me.data.last_lesson.class_name}</p>
+      {me?.data?.last_lesson ? (
+        <section className="py-4">
+          <header className="pb-4 px-2">
+            <h3 className="text-xl font-semibold">Continue a aula</h3>
+            <p>Não perca o foco, continue de onde parou!</p>
+          </header>
+            <div className="flex justify-between items-center text-white bg-theme-blue dark:bg-background rounded-md p-8 w-full">
+              <div>
+                <h3 className="text-lg font-semibold">{me.data.last_lesson.course_name}</h3>
+                <p>{me.data.last_lesson.class_name}</p>
+              </div>
+              <Link href={`/class/${me.data.last_lesson.course_slug}/${me.data.last_lesson.module_slug}/${me.data.last_lesson.class_slug}/${me.data.last_lesson.component}/${me.data.last_lesson.component_id}`}
+                className="flex gap-2 bg-white text-theme-blue dark:text-white dark:bg-backgroundSecondary px-4 font-semibold py-3 rounded-md"
+              >
+                <span>Continuar Aula</span>
+                <ChevronRight size={24} />
+              </Link>
             </div>
-            <Link href={`/class/${me.data.last_lesson.course_slug}/${me.data.last_lesson.module_slug}/${me.data.last_lesson.class_slug}/${me.data.last_lesson.component}/${me.data.last_lesson.component_id}`}
-              className="flex gap-2 bg-backgroundSecondary px-4 font-semibold py-2 rounded-md"
-            >
-              <span>Continuar Aula</span>
-              <ChevronRight size={24} />
-            </Link>
-          </div>
-        ) : null}
-      </section>
+        </section>
+      ) : null}
 
       <section className="py-4">
+        <header className="pb-4 px-2">
+          <h3 className="text-xl font-semibold">Meu Progresso</h3>
+          <p>Esse é o seu histórico de treinamento das últimas 2 semanas</p>
+        </header>
         <ProgressByDay data={me?.data?.my_progress} />
       </section>
     </div>

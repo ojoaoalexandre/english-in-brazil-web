@@ -42,7 +42,7 @@ export const SectionChapters = ({ lessons }: { lessons: LessonSchema }) => {
   return lessons.attributes.template ? (
     <div className="flex flex-col gap-2">
       <div className="flex">
-        <button className="px-4 py-2 rounded-md bg-background" onClick={() => setShowResources(!showResources)}>Materiais Complementares</button>
+        <button className="px-4 py-2 rounded-full bg-background" onClick={() => setShowResources(!showResources)}>Materiais Complementares</button>
       </div>
 
       {groupItemsByCategory(lessons?.attributes.Aulas).map((lesson, index) => {

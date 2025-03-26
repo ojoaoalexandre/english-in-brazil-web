@@ -18,7 +18,7 @@ export default function CardThumb({
       <div className="relative w-full h-40">
         <Image
           src={imageUrl}
-          alt={title}
+          alt={title || "Thumbnail"}
           layout="fill"
           objectFit="cover"
         />

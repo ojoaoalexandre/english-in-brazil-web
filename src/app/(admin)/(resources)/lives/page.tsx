@@ -1,4 +1,4 @@
-import { fetchLives } from "@/actions/lives/fetch-lives"
+import { fetchLives } from "@/actions/fetch-lives"
 import Breadcrump from "@/components/breadcrump"
 import CardThumb from "@/components/card-thumb"
 
